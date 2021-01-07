@@ -1,0 +1,150 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<title>CSP2 Country API</title>
+		<script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+		crossorigin="anonymous"></script>
+		<style>
+		.flex-container{
+			display: flex;
+			flex-direction: row;
+		}
+		table {
+			border-collapse: collapse;
+		}
+
+		td, tr, table{
+			border: 1px solid rgb(102, 101, 101);
+		}
+		td {
+			padding: 5px;
+			vertical-align: bottom;
+		}
+	
+		th {
+			  background-color: #4CAF50;
+			  
+			  color: white;
+
+		}
+
+		tr:nth-child(even) {
+			background-color: #f2f2f2;
+		}
+
+		#main2 {
+			position: fixed;
+			float: left;
+			left: 38em;
+			font-size: 20px;
+			font-family: 'Courier New', Courier, monospace;
+		
+		}
+	</style>
+	</head>
+	<body>
+		<div class="flex-container">
+			<div id="main"></div>
+			<div id="main2"></div>
+		</div>
+		<script type="text/javascript">
+			
+			// Start laadTabel() function
+			function laadTabel(){
+
+				// Json ophalen
+				$.getJSON("https://restcountries.eu/rest/v2/all", function( json ){
+					
+					// Bevesteging dat 't gelukt is
+					
+					console.log('API succesvol geladen');
+					console.log(json);
+					// Select aanmaken met id = se
+					//var slct = $("<select>").attr("id", "se");
+					
+					// Table met table headers maken.
+					var tbl=$("<table>").addClass("tblA");
+						tbl.append($("<th>").html("Naam") );
+						tbl.append($("<th>").html("Regio") );
+						tbl.append($("<th>").html("Hoofdstad") );
+						tbl.append($("<th>").html("Grenst aan") );
+						tbl.append($("<th>").html("Grenst aan") );
+					
+					// Select aanmaken met alle landen die grenzen aan de bijbehorende land
+					$.each(json, function(key, country){
+						
+						var slct = $("<select>").addClass("se").change(function () {
+							
+							$.each(json, function(key2, country2){
+								//console.log(country2.alpha3Code);
+								//console.log(slct.val());
+								var selCountry = slct.val();
+								//console.log(selCountry);
+								if(selCountry == country2.alpha3Code){
+									$("#main2").empty
+									console.log("Naam: ", country2.name);
+									console.log("Hoofdstad: ", country2.capital);
+									console.log("Aantal inwoners: ", country2.population);
+									
+									document.getElementById("main2").innerHTML= "Land: "+ country2.name + "<br>" + 
+									"Hoofdstad: " + country.capital + "<br>" + 
+									"Aantal inwoners: " + country.population + "<br>";
+								}
+
+
+							});
+						});
+						$.each(country.borders, function(key1, borders){
+							slct.append($("<option>")
+                     		.text(borders)
+						);
+						});
+				
+						// Tabel maken met de landen naam, regio, hoofdstad, aan hoeveel het grenst.
+						var tr = $("<tr>");
+						tr.append($("<td>").html(country.name) );
+						tr.append($("<td>").html(country.region) );
+						tr.append($("<td>").html(country.capital) );
+						tr.append($("<td>").html(country.borders.length) );
+						tr.append($("<td>").html(slct) );
+						//tr.append($("<td>").html("<select><option>" + country.borders + "</option></select>") );
+						//tr.append($("<td>").html((country.borders).count() );
+						
+						// Toevoegen aan tabel.
+						tbl.append(tr);
+						
+
+						// if(slct.val() == country.borders){
+						// 	var info = country.name;
+						// 	var info = country.region;
+						// 	$("main2").append(slct);
+						// }
+						
+						
+						// Select onchange functie
+						// $(slct).change(function () {    
+						// 	document.getElementById("main2").innerHTML="You selected: "+ $( "#se option:selected" ).text();;  
+						// 	// if statement
+						// 	if($('#se').val()){
+						// 		console.log(country.borders);
+						// 	}
+						// });
+					});
+					
+					
+					$("#main").append(tbl);		
+			 		//$("#main2").append(slct);
+
+
+				
+				 });
+				// Json afsluiten
+			 
+			}
+			// Einde function laadTabel();
+			
+			
+			laadTabel();
+		</script>
+	</body>		
+</html>
